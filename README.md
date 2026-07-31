@@ -6,21 +6,6 @@ OpenCode names sessions generically. This plugin watches session activity and
 sets a meaningful title from your current todo task, falling back to a summary
 of your first message.
 
-## How it works
-
-The plugin hooks into session events (`session.created`, `message.updated`,
-`todo.updated`, `command.executed`) and renders a title from a configurable
-template. Updates are debounced (10s) so the title doesn't churn mid-conversation,
-with a periodic re-check (60s) as a safety net.
-
-By default the title is `{task || firstMessage}`:
-
-1. If there's an `in_progress` todo, use its content
-2. Otherwise, summarize the first user message
-
-The sessions menu already shows the project/directory, so the project name is
-not included in the default title — but it's available if you want it.
-
 ## Install
 
 Add it to the `plugin` array in `~/.config/opencode/opencode.jsonc`:
@@ -44,6 +29,32 @@ From a local checkout (like this repo):
 ```
 
 Then run `npm install && npm run build` in the repo, and restart OpenCode.
+
+## Example
+
+Prompt the AI:
+
+> Create a new plugin for OpenCode which sets the name of the session
+> dynamically based on the content of the session.
+
+The session is renamed to:
+
+> Opencode plugin to automatically set the session name
+
+## How it works
+
+The plugin hooks into session events (`session.created`, `message.updated`,
+`todo.updated`, `command.executed`) and renders a title from a configurable
+template. Updates are debounced (10s) so the title doesn't churn mid-conversation,
+with a periodic re-check (60s) as a safety net.
+
+By default the title is `{task || firstMessage}`:
+
+1. If there's an `in_progress` todo, use its content
+2. Otherwise, summarize the first user message
+
+The sessions menu already shows the project/directory, so the project name is
+not included in the default title — but it's available if you want it.
 
 ## Configure
 
