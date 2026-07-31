@@ -1,4 +1,4 @@
-# opencode-auto-name
+# OpenCode auto session rename
 
 Auto-rename OpenCode sessions based on what you're working on.
 
