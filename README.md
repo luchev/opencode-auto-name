@@ -23,12 +23,13 @@ From a local checkout (like this repo):
 ```jsonc
 {
   "plugin": [
-    "file:/path/to/opencode-auto-name"
+    "file:///path/to/opencode-auto-name"
   ]
 }
 ```
 
-Then run `npm install && npm run build` in the repo, and restart OpenCode.
+For a local checkout, run `npm install && npm run build` in the repo first,
+then restart OpenCode.
 
 ## Example
 
