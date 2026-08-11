@@ -60,7 +60,7 @@ Test against a live opencode instance using a local checkout first:
 
 ```json
 {
-  "plugin": ["file:///Users/z/opencode-auto-name"]
+  "plugin": ["file:///path/to/opencode-auto-name"]
 }
 ```
 
