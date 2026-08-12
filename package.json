@@ -1,6 +1,6 @@
 {
   "name": "opencode-auto-name",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Auto-rename OpenCode sessions based on what you're working on",
   "type": "module",
   "main": "dist/index.js",
@@ -24,6 +24,11 @@
   "devDependencies": {
     "typescript": "^5.7.0"
   },
-  "keywords": ["opencode", "plugin", "session", "rename"],
+  "keywords": [
+    "opencode",
+    "plugin",
+    "session",
+    "rename"
+  ],
   "license": "MIT"
 }
