@@ -12,6 +12,7 @@ export default function sessionNamePlugin(opts) {
         const projectName = project.worktree.split("/").pop() ??
             directory?.split("/").pop() ??
             project.id;
+        let sessionID = "";
         let firstMessage = "";
         let currentTask = "";
         let messageCount = 0;
@@ -39,13 +40,15 @@ export default function sessionNamePlugin(opts) {
             return render(cfg.template, vars, projectName);
         }
         async function applyTitle() {
+            if (!sessionID)
+                return;
             const title = getTitle();
             if (title === lastTitle)
                 return;
             lastTitle = title;
             try {
                 await client.session.update({
-                    path: { id: project.id },
+                    path: { id: sessionID },
                     body: { title },
                 });
             }
@@ -65,6 +68,7 @@ export default function sessionNamePlugin(opts) {
                 switch (ev.type) {
                     case "session.created": {
                         const info = ev.properties.info;
+                        sessionID = info?.id ?? "";
                         lastTitle = info?.title ?? "";
                         firstMessage = "";
                         currentTask = "";
@@ -74,6 +78,8 @@ export default function sessionNamePlugin(opts) {
                     case "message.updated": {
                         messageCount++;
                         const msg = ev.properties.info;
+                        if (msg?.sessionID)
+                            sessionID = msg.sessionID;
                         if (msg?.role === "user" && msg.summary?.title && !firstMessage) {
                             firstMessage = msg.summary.title;
                         }
@@ -81,6 +87,9 @@ export default function sessionNamePlugin(opts) {
                         break;
                     }
                     case "todo.updated": {
+                        const props = ev.properties;
+                        if (props?.sessionID)
+                            sessionID = props.sessionID;
                         const todos = ev.properties.todos;
                         const active = todos?.find((t) => t.status === "in_progress");
                         currentTask = active
@@ -90,6 +99,9 @@ export default function sessionNamePlugin(opts) {
                         break;
                     }
                     case "command.executed": {
+                        const props = ev.properties;
+                        if (props?.sessionID)
+                            sessionID = props.sessionID;
                         scheduleUpdate();
                         break;
                     }

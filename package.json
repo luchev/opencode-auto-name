@@ -1,6 +1,6 @@
 {
   "name": "opencode-auto-name",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Auto-rename OpenCode sessions based on what you're working on",
   "type": "module",
   "main": "dist/index.js",

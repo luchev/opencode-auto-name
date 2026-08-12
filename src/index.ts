@@ -31,6 +31,7 @@ export default function sessionNamePlugin(
       directory?.split("/").pop() ??
       project.id;
 
+    let sessionID = "";
     let firstMessage = "";
     let currentTask = "";
     let messageCount = 0;
@@ -61,12 +62,13 @@ export default function sessionNamePlugin(
     }
 
     async function applyTitle(): Promise<void> {
+      if (!sessionID) return;
       const title = getTitle();
       if (title === lastTitle) return;
       lastTitle = title;
       try {
         await client.session.update({
-          path: { id: project.id },
+          path: { id: sessionID },
           body: { title },
         });
       } catch {
@@ -91,8 +93,9 @@ export default function sessionNamePlugin(
         switch (ev.type) {
           case "session.created": {
             const info = ev.properties.info as
-              | { title?: string; summary?: { title?: string } }
+              | { id?: string; title?: string; summary?: { title?: string } }
               | undefined;
+            sessionID = info?.id ?? "";
             lastTitle = info?.title ?? "";
             firstMessage = "";
             currentTask = "";
@@ -103,8 +106,13 @@ export default function sessionNamePlugin(
           case "message.updated": {
             messageCount++;
             const msg = ev.properties.info as
-              | { role?: string; summary?: { title?: string } }
+              | {
+                  sessionID?: string;
+                  role?: string;
+                  summary?: { title?: string };
+                }
               | undefined;
+            if (msg?.sessionID) sessionID = msg.sessionID;
             if (msg?.role === "user" && msg.summary?.title && !firstMessage) {
               firstMessage = msg.summary.title;
             }
@@ -113,6 +121,8 @@ export default function sessionNamePlugin(
           }
 
           case "todo.updated": {
+            const props = ev.properties as { sessionID?: string };
+            if (props?.sessionID) sessionID = props.sessionID;
             const todos = ev.properties.todos as
               | Array<{ content: string; status: string }>
               | undefined;
@@ -125,6 +135,8 @@ export default function sessionNamePlugin(
           }
 
           case "command.executed": {
+            const props = ev.properties as { sessionID?: string };
+            if (props?.sessionID) sessionID = props.sessionID;
             scheduleUpdate();
             break;
           }
